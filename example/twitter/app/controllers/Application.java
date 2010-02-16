@@ -20,11 +20,6 @@ import oauth.signpost.basic.DefaultOAuthProvider;
 
 public class Application extends Controller {
 	
-	public static final OAuthProvider provider = new DefaultOAuthProvider(
-				"http://twitter.com/oauth/request_token",
-				"http://twitter.com/oauth/access_token",
-				"http://twitter.com/oauth/authorize");
-
 	public static void index() throws Exception {
 		String url = "http://twitter.com/statuses/mentions.xml";
 		String mentions = twitterCall(url);
@@ -34,21 +29,17 @@ public class Application extends Controller {
 	public static void authenticate(String callback) throws Exception {
 		// 1: get the request token
 		User user = getUser();
-
 		Map<String, Object> args = new HashMap<String, Object>();
 		args.put("callback", callback);
 		String callbackURL = Router.getFullUrl(request.controller + ".oauthCallback", args);
-		String authUrl = provider.retrieveRequestToken(user.getConsumer(), callbackURL);
-		user.save();
-
+		String authUrl = user.retrieveRequestToken(callbackURL);
 		redirect(authUrl);
 	}
 
 	public static void oauthCallback(String callback, String oauth_token, String oauth_verifier) throws Exception {
 		// 2: get the access token
 		User user = getUser();
-		provider.retrieveAccessToken(user.getConsumer(), oauth_verifier);
-		user.save();
+		user.retrieveAccessToken(oauth_verifier);
 		redirect(callback);
 	}
 

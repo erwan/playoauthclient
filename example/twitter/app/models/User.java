@@ -6,6 +6,7 @@ import play.db.jpa.*;
 import javax.persistence.*;
 
 import oauth.signpost.OAuthProvider;
+import oauthclient.OAuthParameters;
 
 import java.util.*;
 
@@ -27,13 +28,28 @@ public class User extends OAuthClientUser {
 	}
 
 	@Override
+	protected String accessURL() {
+		return "http://twitter.com/oauth/access_token";
+	}
+
+	@Override
+	protected String authorizeURL() {
+		return "http://twitter.com/oauth/authorize";
+	}
+
+	@Override
 	protected String consumerKey() {
-		return "eevIR82fiFK3e6VrGpO9rw";
+		return "eevIR82fiFK3e6VrGpO9rw"; 
 	}
 
 	@Override
 	protected String consumerSecret() {
 		return "OYCQA6fpsLiMVaxqqm1EqDjDWFmdlbkSYYcIbwICrg";
+	}
+
+	@Override
+	protected String requestURL() {
+		return "http://twitter.com/oauth/request_token";
 	}
 
 }

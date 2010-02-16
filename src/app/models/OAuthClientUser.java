@@ -9,9 +9,12 @@ import javax.persistence.*;
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.OAuthProvider;
 import oauth.signpost.basic.DefaultOAuthConsumer;
+import oauth.signpost.basic.DefaultOAuthProvider;
 import oauth.signpost.exception.OAuthCommunicationException;
 import oauth.signpost.exception.OAuthExpectationFailedException;
 import oauth.signpost.exception.OAuthMessageSignerException;
+import oauth.signpost.exception.OAuthNotAuthorizedException;
+import oauthclient.OAuthParameters;
 import oauthclient.WSOAuthConsumer;
 
 import java.util.*;
@@ -23,19 +26,15 @@ public abstract class OAuthClientUser extends Model {
 	String oauth_secret;
 
 	@Transient
-	WSOAuthConsumer consumer;
+	private WSOAuthConsumer consumer;
 
-	/**
-	 * The consumer key for your application, that the provider gives
-	 * you when you register an app
-	 * @return
-	 */
+	@Transient
+	private OAuthProvider provider;
+
+	protected abstract String requestURL();
+	protected abstract String accessURL();
+	protected abstract String authorizeURL();
 	protected abstract String consumerKey();
-	/**
-	 * The consumer secret for your application, that the provider gives
-	 * you when you register an app
-	 * @return
-	 */
 	protected abstract String consumerSecret();
 
 	public WSOAuthConsumer getConsumer() {
@@ -47,6 +46,39 @@ public abstract class OAuthClientUser extends Model {
 		}
 		return consumer;
 	}
+
+	public OAuthProvider getProvider() {
+		if (provider == null) {
+			provider = new DefaultOAuthProvider(
+					requestURL(),
+					accessURL(),
+					authorizeURL());
+		}
+		return provider;
+	}
+
+	// Authentication
+
+	/**
+	 * Return the URL on the provider's site that we should redirect the user
+	 * to in order to get the token
+	 */
+	public String retrieveRequestToken(String callbackURL) throws Exception {
+		Logger.info("Token before request: " + getConsumer().getToken());
+		String authUrl = getProvider().retrieveRequestToken(getConsumer(), callbackURL);
+		Logger.info("Token after request: " + getConsumer().getToken());
+		save();
+		return authUrl;
+	}
+
+	public void retrieveAccessToken(String verifier) throws OAuthMessageSignerException, OAuthNotAuthorizedException, OAuthExpectationFailedException, OAuthCommunicationException {
+		Logger.info("Token before retrieve: " + getConsumer().getToken());
+		Logger.info("Verifier: " + verifier);
+		getProvider().retrieveAccessToken(getConsumer(), verifier);
+		save();
+	}
+
+	// Signing requests
 
 	/**
 	 * Sign the url with the OAuth tokens for the user. This method can only be used for GET requests.
