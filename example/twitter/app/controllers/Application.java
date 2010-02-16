@@ -1,8 +1,5 @@
 package controllers;
 
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,19 +8,23 @@ import models.*;
 
 import play.libs.WS;
 import play.libs.WS.HttpResponse;
-import play.libs.WS.WSRequest;
 import play.mvc.*;
-import play.mvc.Scope.Flash;
-
-import oauth.signpost.OAuthProvider;
-import oauth.signpost.basic.DefaultOAuthProvider;
 
 public class Application extends Controller {
 	
 	public static void index() throws Exception {
+		User user = getUser();
 		String url = "http://twitter.com/statuses/mentions.xml";
-		String mentions = twitterCall(url);
+		String mentions = play.libs.WS.url(user.sign(url)).get().getString();
 		render(mentions);
+	}
+
+	public static void setStatus(String status) throws Exception {
+		User user = getUser();
+		String url = "http://twitter.com/statuses/update.json?status=" + URLEncoder.encode(status, "utf-8");
+		String response = user.sign(WS.url(url), "POST").post().getString();
+		request.current().contentType = "application/json";
+		renderText(response);
 	}
 
 	public static void authenticate(String callback) throws Exception {
@@ -43,19 +44,7 @@ public class Application extends Controller {
 		redirect(callback);
 	}
 
-	private static String twitterCall(String url) throws Exception {
-		User user = getUser();
-		HttpResponse resp = play.libs.WS.url(user.sign(url)).get();
-		System.out.println(resp.getString());
-		return resp.getString();
-	}
-
-	public static void setStatus(String status) throws Exception {
-		User user = getUser();
-		String url = "http://twitter.com/statuses/update.xml?status=" + URLEncoder.encode(status, "utf-8");
-		String response = user.sign(WS.url(url), "POST").post().getString();
-		renderText(response);
-	}
+	// TODO: Make it real
 
 	private static User getUser() {
 		return User.findOrCreate("erwan");

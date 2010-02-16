@@ -1,14 +1,11 @@
 package models;
 
+import java.util.*;
+
 import play.*;
 import play.db.jpa.*;
 
 import javax.persistence.*;
-
-import oauth.signpost.OAuthProvider;
-import oauthclient.OAuthParameters;
-
-import java.util.*;
 
 @Entity
 public class User extends OAuthClientUser {

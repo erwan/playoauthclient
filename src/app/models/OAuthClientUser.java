@@ -14,7 +14,6 @@ import oauth.signpost.exception.OAuthCommunicationException;
 import oauth.signpost.exception.OAuthExpectationFailedException;
 import oauth.signpost.exception.OAuthMessageSignerException;
 import oauth.signpost.exception.OAuthNotAuthorizedException;
-import oauthclient.OAuthParameters;
 import oauthclient.WSOAuthConsumer;
 
 import java.util.*;
@@ -53,6 +52,7 @@ public abstract class OAuthClientUser extends Model {
 					requestURL(),
 					accessURL(),
 					authorizeURL());
+			provider.setOAuth10a(true);
 		}
 		return provider;
 	}
