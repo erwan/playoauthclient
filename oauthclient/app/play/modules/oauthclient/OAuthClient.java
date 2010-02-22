@@ -49,6 +49,10 @@ public class OAuthClient {
 
 	// Authentication
 
+	public void authenticate(Credentials cred, String callbackURL) throws Exception {
+		throw new Redirect(retrieveRequestToken(cred, callbackURL));
+	}
+
 	/**
 	 * Retrieve the request token, and store it in user.
 	 * to in order to get the token.

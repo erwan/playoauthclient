@@ -29,7 +29,7 @@ public class Application extends Controller {
 		renderText(response);
 	}
 
-	// TODO: Move to the module
+	// Twitter authentication
 
 	public static void authenticate(String callback) throws Exception {
 		// 1: get the request token
@@ -37,8 +37,7 @@ public class Application extends Controller {
 		Map<String, Object> args = new HashMap<String, Object>();
 		args.put("callback", callback);
 		String callbackURL = Router.getFullUrl(request.controller + ".oauthCallback", args);
-		String authUrl = getConnector().retrieveRequestToken(user.twitterCreds, callbackURL);
-		redirect(authUrl);
+		getConnector().authenticate(user.twitterCreds, callbackURL);
 	}
 
 	public static void oauthCallback(String callback, String oauth_token, String oauth_verifier) throws Exception {
@@ -48,7 +47,7 @@ public class Application extends Controller {
 		redirect(callback);
 	}
 
-	// TODO: Make it real
+	// TODO: Make it real?
 
 	private static User getUser() {
 		return User.findOrCreate("guest");
