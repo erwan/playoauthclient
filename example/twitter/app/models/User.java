@@ -7,10 +7,16 @@ import play.db.jpa.*;
 
 import javax.persistence.*;
 
+import oauthclient.IOAuthUser;
+
 @Entity
-public class User extends OAuthClientUser {
+public class User extends Model implements IOAuthUser {
 
 	String username;
+
+	String oauth_token;
+
+	String oauth_secret;
 
 	public User(String username) {
 		this.username = username;
@@ -25,28 +31,25 @@ public class User extends OAuthClientUser {
 	}
 
 	@Override
-	protected String accessURL() {
-		return "http://twitter.com/oauth/access_token";
+	public String getSecret() {
+		return oauth_secret;
 	}
 
 	@Override
-	protected String authorizeURL() {
-		return "http://twitter.com/oauth/authorize";
+	public String getToken() {
+		return oauth_token;
 	}
 
 	@Override
-	protected String consumerKey() {
-		return "eevIR82fiFK3e6VrGpO9rw"; 
+	public void setSecret(String secret) {
+		oauth_secret = secret;
+		save();
 	}
 
 	@Override
-	protected String consumerSecret() {
-		return "OYCQA6fpsLiMVaxqqm1EqDjDWFmdlbkSYYcIbwICrg";
-	}
-
-	@Override
-	protected String requestURL() {
-		return "http://twitter.com/oauth/request_token";
+	public void setToken(String token) {
+		oauth_token = token;
+		save();
 	}
 
 }

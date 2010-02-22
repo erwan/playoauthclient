@@ -1,4 +1,4 @@
-package models;
+package oauthclient;
 
 import play.*;
 import play.db.jpa.*;
@@ -14,7 +14,6 @@ import oauth.signpost.exception.OAuthCommunicationException;
 import oauth.signpost.exception.OAuthExpectationFailedException;
 import oauth.signpost.exception.OAuthMessageSignerException;
 import oauth.signpost.exception.OAuthNotAuthorizedException;
-import oauthclient.WSOAuthConsumer;
 
 import java.util.*;
 
