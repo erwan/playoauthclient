@@ -4,10 +4,10 @@ import java.util.*;
 
 import play.*;
 import play.db.jpa.*;
+import play.modules.oauthclient.IOAuthUser;
 
 import javax.persistence.*;
 
-import oauthclient.IOAuthUser;
 
 @Entity
 public class User extends Model implements IOAuthUser {
@@ -30,23 +30,21 @@ public class User extends Model implements IOAuthUser {
 		return user;
 	}
 
-	@Override
+	// IOAuthUser
+
 	public String getSecret() {
 		return oauth_secret;
 	}
 
-	@Override
 	public String getToken() {
 		return oauth_token;
 	}
 
-	@Override
 	public void setSecret(String secret) {
 		oauth_secret = secret;
 		save();
 	}
 
-	@Override
 	public void setToken(String token) {
 		oauth_token = token;
 		save();
