@@ -4,22 +4,23 @@ import java.util.*;
 
 import play.*;
 import play.db.jpa.*;
-import play.modules.oauthclient.IOAuthUser;
 
 import javax.persistence.*;
 
+import models.oauthclient.Credentials;
+
 
 @Entity
-public class User extends Model implements IOAuthUser {
+public class User extends Model {
 
-	String username;
+	public String username;
 
-	String oauth_token;
-
-	String oauth_secret;
+	public Credentials twitterCreds;
 
 	public User(String username) {
 		this.username = username;
+		this.twitterCreds = new Credentials();
+		this.twitterCreds.save();
 	}
 
 	public static User findOrCreate(String username) {
@@ -28,26 +29,6 @@ public class User extends Model implements IOAuthUser {
 			user = new User(username);
 		}
 		return user;
-	}
-
-	// IOAuthUser
-
-	public String getSecret() {
-		return oauth_secret;
-	}
-
-	public String getToken() {
-		return oauth_token;
-	}
-
-	public void setSecret(String secret) {
-		oauth_secret = secret;
-		save();
-	}
-
-	public void setToken(String token) {
-		oauth_token = token;
-		save();
 	}
 
 }

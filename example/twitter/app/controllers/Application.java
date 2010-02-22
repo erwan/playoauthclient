@@ -9,7 +9,7 @@ import models.*;
 
 import play.libs.WS;
 import play.libs.WS.HttpResponse;
-import play.modules.oauthclient.OAuthConnector;
+import play.modules.oauthclient.OAuthClient;
 import play.mvc.*;
 
 public class Application extends Controller {
@@ -17,14 +17,14 @@ public class Application extends Controller {
 	public static void index() throws Exception {
 		User user = getUser();
 		String url = "http://twitter.com/statuses/mentions.xml";
-		String mentions = play.libs.WS.url(getConnector().sign(user, url)).get().getString();
+		String mentions = play.libs.WS.url(getConnector().sign(user.twitterCreds, url)).get().getString();
 		render(mentions);
 	}
 
 	public static void setStatus(String status) throws Exception {
 		User user = getUser();
 		String url = "http://twitter.com/statuses/update.json?status=" + URLEncoder.encode(status, "utf-8");
-		String response = getConnector().sign(user, WS.url(url), "POST").post().getString();
+		String response = getConnector().sign(user.twitterCreds, WS.url(url), "POST").post().getString();
 		request.current().contentType = "application/json";
 		renderText(response);
 	}
@@ -37,14 +37,14 @@ public class Application extends Controller {
 		Map<String, Object> args = new HashMap<String, Object>();
 		args.put("callback", callback);
 		String callbackURL = Router.getFullUrl(request.controller + ".oauthCallback", args);
-		String authUrl = getConnector().retrieveRequestToken(user, callbackURL);
+		String authUrl = getConnector().retrieveRequestToken(user.twitterCreds, callbackURL);
 		redirect(authUrl);
 	}
 
 	public static void oauthCallback(String callback, String oauth_token, String oauth_verifier) throws Exception {
 		// 2: get the access token
 		User user = getUser();
-		getConnector().retrieveAccessToken(user, oauth_verifier);
+		getConnector().retrieveAccessToken(user.twitterCreds, oauth_verifier);
 		redirect(callback);
 	}
 
@@ -54,10 +54,10 @@ public class Application extends Controller {
 		return User.findOrCreate("guest");
 	}
 
-	private static OAuthConnector connector = null;
-	private static OAuthConnector getConnector() {
+	private static OAuthClient connector = null;
+	private static OAuthClient getConnector() {
 		if (connector == null) {
-			connector = new OAuthConnector(
+			connector = new OAuthClient(
 					"http://twitter.com/oauth/request_token",
 					"http://twitter.com/oauth/access_token",
 					"http://twitter.com/oauth/authorize",

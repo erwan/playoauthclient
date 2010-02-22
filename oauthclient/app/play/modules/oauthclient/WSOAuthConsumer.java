@@ -11,7 +11,7 @@ import oauth.signpost.exception.OAuthMessageSignerException;
 import oauth.signpost.http.HttpRequest;
 import play.libs.WS.WSRequest;
 
-class WSOAuthConsumer extends AbstractOAuthConsumer {
+public class WSOAuthConsumer extends AbstractOAuthConsumer {
 
 	public WSOAuthConsumer(String consumerKey, String consumerSecret) {
 		super(consumerKey, consumerSecret);
@@ -40,29 +40,24 @@ class WSOAuthConsumer extends AbstractOAuthConsumer {
 			this.request = request;
 		}
 
-		@Override
 		public Map<String, String> getAllHeaders() {
 			return request.headers;
 		}
 
-		@Override
 		public String getContentType() {
 			return request.mimeType;
 		}
 
-		@Override
 		public String getHeader(String name) {
 			return request.headers.get(name);
 		}
 
-		@Override
 		public InputStream getMessagePayload() throws IOException {
 			return null;
 		}
 
 		private String method = "GET";
 
-		@Override
 		public String getMethod() {
 			return this.method;
 		}
@@ -71,17 +66,14 @@ class WSOAuthConsumer extends AbstractOAuthConsumer {
 			this.method = method;
 		}
 
-		@Override
 		public String getRequestUrl() {
 			return request.url;
 		}
 
-		@Override
 		public void setHeader(String name, String value) {
 			request.setHeader(name, value);
 		}
 
-		@Override
 		public void setRequestUrl(String url) {
 			request.url = url;
 		}
