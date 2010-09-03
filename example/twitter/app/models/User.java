@@ -7,7 +7,6 @@ import play.db.jpa.*;
 
 import javax.persistence.*;
 
-import models.oauthclient.Credentials;
 
 
 @Entity

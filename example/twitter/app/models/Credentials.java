@@ -1,4 +1,4 @@
-package models.oauthclient;
+package models;
 
 import play.*;
 import play.db.jpa.*;

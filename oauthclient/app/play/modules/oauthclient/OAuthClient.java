@@ -83,7 +83,7 @@ public class OAuthClient {
 		Logger.info("Verifier: " + verifier);
 		getProvider().retrieveAccessToken(getConsumer(user), verifier);
 		user.setToken(consumer.getToken());
-		user.setToken(consumer.getTokenSecret());
+		user.setSecret(consumer.getTokenSecret());
 	}
 
 	// Signing requests
